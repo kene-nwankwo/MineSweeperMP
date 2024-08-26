@@ -14,16 +14,19 @@ public class Game {
 	private int mines;
 	private int cleared;
 	private int gameState = 0;
+	private int playerNumber = 0;
 	public boolean firstMove = true;
 	public ArrayList<ArrayList<Box>> grid = null;
+	private GUI gui;
 	
 	
-	public Game(int row, int col, int mines) {
+	public Game(int row, int col, int mines, GUI g) {
 		this.rows = row;
 		this.cols = col;
 		this.mines = mines;
 		this.cleared = 0;
 		this.grid = createGrid();
+		this.gui = g;
 		return;
 	}
 
@@ -62,7 +65,20 @@ public class Game {
 			addMines(mines_set);
 			
 			// Calculate proximity value for each position in the grid update the grid values
-			grid = calcProximity(grid);			
+			grid = calcProximity(grid);
+		
+            String message = "3," + Integer.toString(index);
+            
+            for (int i = 0; i < (this.rows*this.cols); i++) {
+            	int r = i / this.cols;
+        		int c = i % this.cols;
+        		message = message + "," + grid.get(r).get(c).value;
+            }
+            
+            gui.gameServer.broadcastMessage(message);
+		} else {
+			String message = "4," + Integer.toString(index) + "," + playerNumber;
+			gui.gameServer.broadcastMessage(message);
 		}
 		
 		// Test to see if the game is over
