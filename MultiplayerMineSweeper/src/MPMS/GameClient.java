@@ -8,9 +8,10 @@ public class GameClient {
     private Socket socket;
     private PrintWriter out;  // Stream to send messages to the server
     private BufferedReader in;  // Stream to receive messages from the server
+    private GUI gui;
 
     // Constructor to initialize the client with server address and port
-    public GameClient(String serverAddress, int port) {
+    public GameClient(String serverAddress, int port, GUI g) {
         try {
             socket = new Socket(serverAddress, port);  // Create the client socket and connect to the server
             out = new PrintWriter(socket.getOutputStream(), true);  // Initialize output stream
@@ -18,6 +19,12 @@ public class GameClient {
         } catch (IOException e) {
             e.printStackTrace();  // Handle exceptions during socket creation
         }
+        
+        // TODO Add something here to allow it to retry connecting to host
+        this.gui = g;
+        System.out.println("Joined Server");
+        
+        gui.enterIP.setText("Connected to Host");
     }
 
     // Method to send a message to the server
@@ -54,6 +61,7 @@ public class GameClient {
         // Parse the message and update the game state
         // Example: update player positions, health, scores, etc.
         System.out.println("Server: " + message);  // For now, just print the message (this can be expanded to game logic)
+        gui.serverComm(message.split(","));
     }
 
     // Method to close the client socket when the game ends or disconnects
@@ -65,3 +73,5 @@ public class GameClient {
         }
     }
 }
+
+
